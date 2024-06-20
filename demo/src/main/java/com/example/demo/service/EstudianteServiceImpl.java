@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.example.demo.entities.Estudiante;
 import com.example.demo.repositories.EstudianteRepository;
+import java.util.List;
 
 @Service
 public class EstudianteServiceImpl implements EstudianteService {
@@ -22,9 +23,31 @@ public class EstudianteServiceImpl implements EstudianteService {
     }
 
     @Override
-    public Estudiante obtenerEstudiantePorCorreo(String correo)  	{
+    public Estudiante obtenerEstudiantePorCorreo(String correo) {
         return estudianteRepository.findByCorreo(correo);
     }
 
-    // Otros métodos según sea necesario
+    @Override
+    public Estudiante obtenerEstudiantePorCodigo(String codigo) {
+        return estudianteRepository.findByCodigo(codigo);
+    }
+
+    @Override
+    public Estudiante obtenerEstudiantePorUuid(String uuid) {
+        return estudianteRepository.findByUuid(uuid);
+    }
+
+    @Override
+    public List<Estudiante> listAll() {
+        return estudianteRepository.findAll();
+    }
+
+    @Override
+    public Estudiante eliminarEstudiantePorCodigo(String codigo) {
+        Estudiante estudiante = estudianteRepository.findByCodigo(codigo);
+        if (estudiante != null) {
+            estudianteRepository.delete(estudiante);
+        }
+        return estudiante;
+    }
 }

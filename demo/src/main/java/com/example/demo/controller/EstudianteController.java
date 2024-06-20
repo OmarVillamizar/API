@@ -1,8 +1,11 @@
 package com.example.demo.controller;
+
 import com.example.demo.entities.Estudiante;
 import com.example.demo.service.EstudianteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/estudiantes")
@@ -26,5 +29,23 @@ public class EstudianteController {
         return estudianteService.obtenerEstudiantePorCorreo(correo);
     }
 
-    // Otros endpoints según sea necesario
+    @GetMapping("/codigo/{codigo}")
+    public Estudiante obtenerEstudiantePorCodigo(@PathVariable String codigo) {
+        return estudianteService.obtenerEstudiantePorCodigo(codigo);
+    }
+
+    @GetMapping("/uuid/{uuid}")
+    public Estudiante obtenerEstudiantePorUuid(@PathVariable String uuid) {
+        return estudianteService.obtenerEstudiantePorUuid(uuid);
+    }
+
+    @GetMapping("/list")
+    public List<Estudiante> listAllEstudiantes() {
+        return estudianteService.listAll();
+    }
+
+    @DeleteMapping("/delete")
+    public Estudiante eliminarEstudiantePorCodigo(@RequestParam String codigo) {
+        return estudianteService.eliminarEstudiantePorCodigo(codigo);
+    }
 }
