@@ -10,5 +10,5 @@ public interface TutorService {
     Tutor obtenerTutorPorCodigo(String codigo); 
     List<Tutor> listAll();
     Tutor eliminarTutorPorCodigo(String codigo);
-    Tutor actualizarTutor(Tutor tutor);  // Método para actualizar el tutor
+    Tutor actualizarTutor(Tutor tutor);  
 }
