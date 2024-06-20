@@ -1,4 +1,4 @@
-package com.example.demo.repositories;
+package com.example.demo.controller;
 import com.example.demo.entities.Tutor;
 import com.example.demo.service.TutorService;
 import org.springframework.beans.factory.annotation.Autowired;
