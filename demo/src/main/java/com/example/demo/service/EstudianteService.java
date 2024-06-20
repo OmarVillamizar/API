@@ -11,4 +11,6 @@ public interface EstudianteService {
     Estudiante obtenerEstudiantePorUuid(String uuid);
     List<Estudiante> listAll();
     Estudiante eliminarEstudiantePorCodigo(String codigo);
+    Estudiante actualizarEstudiante(int id, String nombre, String correo, String codigo);
+    Estudiante actualizarNombreYCorreo(int id, String nombre, String correo);
 }

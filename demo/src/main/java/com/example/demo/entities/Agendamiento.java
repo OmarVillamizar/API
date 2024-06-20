@@ -1,33 +1,37 @@
 package com.example.demo.entities;
 import jakarta.persistence.*;
 import lombok.*;
-import java.time.LocalDateTime;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
-@Data
 @Entity
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Agendamiento {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private int id;
 
     @ManyToOne
-    @JoinColumn(name = "estudiante_id", nullable = false)
+    @JoinColumn(name = "estudiante_id")
     private Estudiante estudiante;
 
     @ManyToOne
-    @JoinColumn(name = "tutor_id", nullable = false)
+    @JoinColumn(name = "tutor_id")
     private Tutor tutor;
 
-    @Column
+    @Column(name = "motivo")
     private String motivo;
 
-    @Column(name = "hora_inicio", nullable = false)
-    private LocalDateTime horaInicio;
-
-    @Column(name = "hora_fin", nullable = false)
-    private LocalDateTime horaFin;
-
-    @Column(name = "codigo_materia", nullable = false)
+    @Column(name = "codigo_materia")
     private String codigoMateria;
+
+    @Column(name = "turno")
+    private int turno;
+
+    @Column(name = "estado")
+    private int estado;
+
+    @Column(name = "fecha")
+    private java.sql.Date fecha;
 }

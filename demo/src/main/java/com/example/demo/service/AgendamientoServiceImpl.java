@@ -1,11 +1,13 @@
 package com.example.demo.service;
+
 import com.example.demo.entities.Agendamiento;
+import com.example.demo.entities.Estudiante;
 import com.example.demo.repositories.AgendamientoRepository;
-import com.example.demo.service.AgendamientoService;
+import com.example.demo.repositories.EstudianteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class AgendamientoServiceImpl implements AgendamientoService {
@@ -13,32 +15,70 @@ public class AgendamientoServiceImpl implements AgendamientoService {
     @Autowired
     private AgendamientoRepository agendamientoRepository;
 
+    @Autowired
+    private EstudianteRepository estudianteRepository;
+
     @Override
-    public Agendamiento crearAgendamiento(Agendamiento agendamiento) {
-        return agendamientoRepository.save(agendamiento);
+    public Agendamiento agendarCita(int agendamientoId, int estudianteId, String motivo, String codigoMateria) {
+        Agendamiento agendamiento = agendamientoRepository.findById(agendamientoId).orElse(null);
+        Estudiante estudiante = estudianteRepository.findById(estudianteId).orElse(null);
+
+        if (agendamiento != null && estudiante != null && agendamiento.getEstado() == 0) {
+            // Verificar si el estudiante ya tiene una cita en el mismo turno y día
+            List<Agendamiento> existingAgendamientos = agendamientoRepository.findByEstudianteIdAndFechaAndTurno(estudianteId, agendamiento.getFecha(), agendamiento.getTurno());
+            if (!existingAgendamientos.isEmpty()) {
+                throw new IllegalArgumentException("El estudiante ya tiene una cita en el mismo turno y día.");
+            }
+
+            agendamiento.setEstudiante(estudiante);
+            agendamiento.setMotivo(motivo);
+            agendamiento.setCodigoMateria(codigoMateria);
+            agendamiento.setEstado(1); // Cambia el estado a ocupado
+            agendamientoRepository.save(agendamiento);
+        }
+        return agendamiento;
     }
 
     @Override
-    public List<Agendamiento> listarAgendamientos() {
+    public Agendamiento borrarAgendamiento(int agendamientoId) {
+        Agendamiento agendamiento = agendamientoRepository.findById(agendamientoId).orElse(null);
+        if (agendamiento != null && agendamiento.getEstado() == 1) {
+            agendamiento.setEstudiante(null);
+            agendamiento.setMotivo(null);
+            agendamiento.setCodigoMateria(null);
+            agendamiento.setEstado(0); // Cambia el estado a libre
+            agendamientoRepository.save(agendamiento);
+        }
+        return agendamiento;
+    }
+
+    @Override
+    public List<Agendamiento> listAll() {
         return agendamientoRepository.findAll();
     }
 
     @Override
-    public Agendamiento actualizarAgendamiento(Agendamiento agendamiento) {
-        if (agendamiento.getId() != null && agendamientoRepository.existsById(agendamiento.getId())) {
-            return agendamientoRepository.save(agendamiento);
-        }
-        return null; // Opcionalmente lanzar una excepción si no existe
+    public List<Agendamiento> listOcupados() {
+        return agendamientoRepository.findByEstado(1);
     }
 
     @Override
-    public Agendamiento borrarAgendamiento(Integer agendamientoId) {
-        Optional<Agendamiento> agendamientoOptional = agendamientoRepository.findById(agendamientoId);
-        if (agendamientoOptional.isPresent()) {
-            Agendamiento agendamientoBorrado = agendamientoOptional.get();
-            agendamientoRepository.deleteById(agendamientoId);
-            return agendamientoBorrado;
-        }
-        return null; // Opcionalmente lanzar una excepción si no existe
+    public List<Agendamiento> listOcupadosPorEstudiante(int estudianteId) {
+        return agendamientoRepository.findByEstudianteIdAndEstado(estudianteId, 1);
+    }
+
+    @Override
+    public List<Agendamiento> listOcupadosPorTutor(int tutorId) {
+        return agendamientoRepository.findByTutorIdAndEstado(tutorId, 1);
+    }
+
+    @Override
+    public List<Agendamiento> listOcupadosPorEstudianteCodigo(String codigo) {
+        return agendamientoRepository.findByEstudianteCodigoAndEstado(codigo, 1);
+    }
+
+    @Override
+    public List<Agendamiento> listOcupadosPorTutorCodigo(String codigo) {
+        return agendamientoRepository.findByTutorCodigoAndEstado(codigo, 1);
     }
 }

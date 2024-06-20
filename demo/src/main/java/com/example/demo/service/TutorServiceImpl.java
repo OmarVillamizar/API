@@ -47,10 +47,25 @@ public class TutorServiceImpl implements TutorService {
     }
 
     @Override
-    public Tutor actualizarTutor(Tutor tutor) {
-        if (tutorRepository.existsById(tutor.getId())) {
-            return tutorRepository.save(tutor);
+    public Tutor actualizarTutor(int id, String nombre, String correo, String codigo) {
+        Tutor tutor = tutorRepository.findById(id).orElse(null);
+        if (tutor != null) {
+            tutor.setNombre(nombre);
+            tutor.setCorreo(correo);
+            tutor.setCodigo(codigo);
+            tutorRepository.save(tutor);
         }
-        return null;  
+        return tutor;
+    }
+
+    @Override
+    public Tutor actualizarNombreYCorreo(int id, String nombre, String correo) {
+        Tutor tutor = tutorRepository.findById(id).orElse(null);
+        if (tutor != null) {
+            tutor.setNombre(nombre);
+            tutor.setCorreo(correo);
+            tutorRepository.save(tutor);
+        }
+        return tutor;
     }
 }

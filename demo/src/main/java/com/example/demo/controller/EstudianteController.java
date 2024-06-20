@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/estudiantes")
+@RequestMapping("api/estudiantes")
 public class EstudianteController {
 
     @Autowired
@@ -47,5 +47,15 @@ public class EstudianteController {
     @DeleteMapping("/delete")
     public Estudiante eliminarEstudiantePorCodigo(@RequestParam String codigo) {
         return estudianteService.eliminarEstudiantePorCodigo(codigo);
+    }
+    
+    @PutMapping("/actualizar/{id}")
+    public Estudiante actualizarEstudiante(@PathVariable int id, @RequestParam String nombre, @RequestParam String correo, @RequestParam String codigo) {
+        return estudianteService.actualizarEstudiante(id, nombre, correo, codigo);
+    }
+
+    @PutMapping("/actualizarNombreYCorreo/{id}")
+    public Estudiante actualizarNombreYCorreo(@PathVariable int id, @RequestParam String nombre, @RequestParam String correo) {
+        return estudianteService.actualizarNombreYCorreo(id, nombre, correo);
     }
 }

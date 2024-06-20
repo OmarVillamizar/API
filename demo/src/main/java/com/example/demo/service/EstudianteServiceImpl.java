@@ -50,4 +50,27 @@ public class EstudianteServiceImpl implements EstudianteService {
         }
         return estudiante;
     }
+    
+    @Override
+    public Estudiante actualizarEstudiante(int id, String nombre, String correo, String codigo) {
+        Estudiante estudiante = estudianteRepository.findById(id).orElse(null);
+        if (estudiante != null) {
+            estudiante.setNombre(nombre);
+            estudiante.setCorreo(correo);
+            estudiante.setCodigo(codigo);
+            estudianteRepository.save(estudiante);
+        }
+        return estudiante;
+    }
+
+    @Override
+    public Estudiante actualizarNombreYCorreo(int id, String nombre, String correo) {
+        Estudiante estudiante = estudianteRepository.findById(id).orElse(null);
+        if (estudiante != null) {
+            estudiante.setNombre(nombre);
+            estudiante.setCorreo(correo);
+            estudianteRepository.save(estudiante);
+        }
+        return estudiante;
+    }
 }

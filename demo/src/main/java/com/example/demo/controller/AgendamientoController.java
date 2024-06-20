@@ -3,47 +3,59 @@ package com.example.demo.controller;
 import com.example.demo.entities.Agendamiento;
 import com.example.demo.service.AgendamientoService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/agendamientos")
+@RequestMapping("/api/agendamientos")
 public class AgendamientoController {
 
     @Autowired
     private AgendamientoService agendamientoService;
 
-    @PostMapping
-    public ResponseEntity<Agendamiento> crearAgendamiento(@RequestBody Agendamiento agendamiento) {
-        Agendamiento nuevoAgendamiento = agendamientoService.crearAgendamiento(agendamiento);
-        return new ResponseEntity<>(nuevoAgendamiento, HttpStatus.CREATED);
+    @GetMapping("/list")
+    public List<Agendamiento> listAllAgendamientos() {
+        return agendamientoService.listAll();
     }
 
-    @GetMapping
-    public ResponseEntity<List<Agendamiento>> listarAgendamientos() {
-        List<Agendamiento> agendamientos = agendamientoService.listarAgendamientos();
-        return new ResponseEntity<>(agendamientos, HttpStatus.OK);
+    @GetMapping("/ocupados")
+    public List<Agendamiento> listOcupados() {
+        return agendamientoService.listOcupados();
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Agendamiento> actualizarAgendamiento(@PathVariable Integer id, @RequestBody Agendamiento agendamiento) {
-        agendamiento.setId(id);
-        Agendamiento agendamientoActualizado = agendamientoService.actualizarAgendamiento(agendamiento);
-        if (agendamientoActualizado != null) {
-            return new ResponseEntity<>(agendamientoActualizado, HttpStatus.OK);
-        }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    @GetMapping("/ocupados/estudiante/{estudianteId}")
+    public List<Agendamiento> listOcupadosPorEstudiante(@PathVariable int estudianteId) {
+        return agendamientoService.listOcupadosPorEstudiante(estudianteId);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Agendamiento> borrarAgendamiento(@PathVariable Integer id) {
-        Agendamiento agendamientoBorrado = agendamientoService.borrarAgendamiento(id);
-        if (agendamientoBorrado != null) {
-            return new ResponseEntity<>(agendamientoBorrado, HttpStatus.OK);
-        }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    @GetMapping("/ocupados/tutor/{tutorId}")
+    public List<Agendamiento> listOcupadosPorTutor(@PathVariable int tutorId) {
+        return agendamientoService.listOcupadosPorTutor(tutorId);
+    }
+
+    @GetMapping("/ocupados/estudiante/codigo/{codigo}")
+    public List<Agendamiento> listOcupadosPorEstudianteCodigo(@PathVariable String codigo) {
+        return agendamientoService.listOcupadosPorEstudianteCodigo(codigo);
+    }
+
+    @GetMapping("/ocupados/tutor/codigo/{codigo}")
+    public List<Agendamiento> listOcupadosPorTutorCodigo(@PathVariable String codigo) {
+        return agendamientoService.listOcupadosPorTutorCodigo(codigo);
+    }
+
+    @PutMapping("/agendar/{agendamientoId}")
+    public Agendamiento agendarCita(@PathVariable int agendamientoId, @RequestParam int estudianteId, @RequestParam String motivo, @RequestParam String codigoMateria) {
+        return agendamientoService.agendarCita(agendamientoId, estudianteId, motivo, codigoMateria);
+    }
+
+    @PutMapping("/borrar/{agendamientoId}")
+    public Agendamiento borrarAgendamiento(@PathVariable int agendamientoId) {
+        return agendamientoService.borrarAgendamiento(agendamientoId);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public String handleIllegalArgumentException(IllegalArgumentException e) {
+        return e.getMessage();
     }
 }
