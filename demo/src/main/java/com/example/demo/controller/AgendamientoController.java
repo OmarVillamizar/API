@@ -3,6 +3,8 @@ package com.example.demo.controller;
 import com.example.demo.entities.Agendamiento;
 import com.example.demo.service.AgendamientoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -45,8 +47,13 @@ public class AgendamientoController {
     }
 
     @PutMapping("/agendar/{agendamientoId}")
-    public Agendamiento agendarCita(@PathVariable int agendamientoId, @RequestParam int estudianteId, @RequestParam String motivo, @RequestParam String codigoMateria) {
-        return agendamientoService.agendarCita(agendamientoId, estudianteId, motivo, codigoMateria);
+    public ResponseEntity<?> agendarCita(@PathVariable int agendamientoId, @RequestParam int estudianteId, @RequestParam String motivo, @RequestParam String codigoMateria) {
+        try {
+            Agendamiento agendamiento = agendamientoService.agendarCita(agendamientoId, estudianteId, motivo, codigoMateria);
+            return ResponseEntity.ok(agendamiento);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 
     @PutMapping("/borrar/{agendamientoId}")
@@ -55,7 +62,7 @@ public class AgendamientoController {
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
-    public String handleIllegalArgumentException(IllegalArgumentException e) {
-        return e.getMessage();
+    public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
     }
 }

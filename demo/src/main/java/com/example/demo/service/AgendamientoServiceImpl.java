@@ -7,6 +7,7 @@ import com.example.demo.repositories.EstudianteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -24,12 +25,20 @@ public class AgendamientoServiceImpl implements AgendamientoService {
         Estudiante estudiante = estudianteRepository.findById(estudianteId).orElse(null);
 
         if (agendamiento != null && estudiante != null && agendamiento.getEstado() == 0) {
+            // Verificar si el tutor ya está ocupado en el mismo turno y día
+            List<Agendamiento> tutorOccupied = agendamientoRepository.findByTutorIdAndFechaAndTurnoAndEstado(agendamiento.getTutor().getId(), agendamiento.getFecha(), agendamiento.getTurno(), 1);
+
+            if (!tutorOccupied.isEmpty()) {
+                throw new IllegalArgumentException("El tutor está ocupado en este turno y fecha.");
+            }
+
             // Verificar si el estudiante ya tiene una cita en el mismo turno y día
             List<Agendamiento> existingAgendamientos = agendamientoRepository.findByEstudianteIdAndFechaAndTurno(estudianteId, agendamiento.getFecha(), agendamiento.getTurno());
             if (!existingAgendamientos.isEmpty()) {
                 throw new IllegalArgumentException("El estudiante ya tiene una cita en el mismo turno y día.");
             }
 
+            // Si no hay conflictos, proceder a agendar la cita
             agendamiento.setEstudiante(estudiante);
             agendamiento.setMotivo(motivo);
             agendamiento.setCodigoMateria(codigoMateria);

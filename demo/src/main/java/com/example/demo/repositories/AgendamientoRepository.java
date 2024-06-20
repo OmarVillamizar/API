@@ -14,4 +14,5 @@ public interface AgendamientoRepository extends JpaRepository<Agendamiento, Inte
     List<Agendamiento> findByEstudianteCodigoAndEstado(String codigo, int estado);
     List<Agendamiento> findByTutorCodigoAndEstado(String codigo, int estado);
     List<Agendamiento> findByEstudianteIdAndFechaAndTurno(int estudianteId, Date fecha, int turno);
+    List<Agendamiento> findByTutorIdAndFechaAndTurnoAndEstado(int tutorId, Date fecha, int turno, int estado);
 }
