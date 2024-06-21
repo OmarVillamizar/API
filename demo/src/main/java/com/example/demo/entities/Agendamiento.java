@@ -25,13 +25,10 @@ public class Agendamiento {
 
     @Column(name = "codigo_materia")
     private String codigoMateria;
+    
+    @Column(name = "fecha")
+    private java.sql.Date fecha;
 
     @Column(name = "turno")
     private int turno;
-
-    @Column(name = "estado")
-    private int estado;
-
-    @Column(name = "fecha")
-    private java.sql.Date fecha;
 }

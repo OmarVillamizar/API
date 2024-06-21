@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -21,44 +22,38 @@ public class AgendamientoController {
         return agendamientoService.listAll();
     }
 
-    @GetMapping("/ocupados")
-    public List<Agendamiento> listOcupados() {
-        return agendamientoService.listOcupados();
+    @GetMapping("/estudiante/{estudianteId}")
+    public List<Agendamiento> listPorEstudiante(@PathVariable int estudianteId) {
+        return agendamientoService.listPorEstudiante(estudianteId);
     }
 
-    @GetMapping("/ocupados/estudiante/{estudianteId}")
-    public List<Agendamiento> listOcupadosPorEstudiante(@PathVariable int estudianteId) {
-        return agendamientoService.listOcupadosPorEstudiante(estudianteId);
+    @GetMapping("/tutor/{tutorId}")
+    public List<Agendamiento> listPorTutor(@PathVariable int tutorId) {
+        return agendamientoService.listPorTutor(tutorId);
     }
 
-    @GetMapping("/ocupados/tutor/{tutorId}")
-    public List<Agendamiento> listOcupadosPorTutor(@PathVariable int tutorId) {
-        return agendamientoService.listOcupadosPorTutor(tutorId);
-    }
-
-    @GetMapping("/ocupados/estudiante/codigo/{codigo}")
-    public List<Agendamiento> listOcupadosPorEstudianteCodigo(@PathVariable String codigo) {
-        return agendamientoService.listOcupadosPorEstudianteCodigo(codigo);
-    }
-
-    @GetMapping("/ocupados/tutor/codigo/{codigo}")
-    public List<Agendamiento> listOcupadosPorTutorCodigo(@PathVariable String codigo) {
-        return agendamientoService.listOcupadosPorTutorCodigo(codigo);
-    }
-
-    @PutMapping("/agendar/{agendamientoId}")
-    public ResponseEntity<?> agendarCita(@PathVariable int agendamientoId, @RequestParam int estudianteId, @RequestParam String motivo, @RequestParam String codigoMateria) {
+    @PostMapping("/agendar")
+    public ResponseEntity<?> agendarCita(@RequestBody Agendamiento agendamiento) {
         try {
-            Agendamiento agendamiento = agendamientoService.agendarCita(agendamientoId, estudianteId, motivo, codigoMateria);
-            return ResponseEntity.ok(agendamiento);
+            Agendamiento newAgendamiento = agendamientoService.agendarCita(agendamiento);
+            return ResponseEntity.ok(newAgendamiento);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
-    @PutMapping("/borrar/{agendamientoId}")
-    public Agendamiento borrarAgendamiento(@PathVariable int agendamientoId) {
-        return agendamientoService.borrarAgendamiento(agendamientoId);
+    @DeleteMapping("/borrar/{agendamientoId}")
+    public ResponseEntity<String> borrarAgendamiento(@PathVariable int agendamientoId) {
+        try {
+            Agendamiento deletedAgendamiento = agendamientoService.borrarAgendamiento(agendamientoId);
+            if (deletedAgendamiento != null) {
+                return ResponseEntity.ok("Agendamiento eliminado correctamente");
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
